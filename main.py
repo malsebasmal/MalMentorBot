@@ -1,10 +1,13 @@
-import discord
-from discord.ext import tasks, commands
-from discord import app_commands
 import datetime
-import pytz
 import os
+
+import discord
+import pytz
+from discord import app_commands
+from discord.ext import commands, tasks
 from dotenv import load_dotenv
+
+import webserver
 
 load_dotenv()
 
@@ -17,6 +20,7 @@ ADMIN_ID = int(os.getenv("ADMIN_ID"))
 ZONA_HORARIA = "America/Lima"
 
 intents = discord.Intents.default()
+
 
 class MiBot(commands.Bot):
     def __init__(self):
@@ -107,4 +111,5 @@ async def tarea_diaria():
                 f"<@{JOAQUIN_ID}> Respondé acá tu resumen de la semana 👆"
             )
 
+webserver.keep_alive()
 client.run(TOKEN)
