@@ -21,6 +21,8 @@ ZONA_HORARIA = "America/Lima"
 
 intents = discord.Intents.default()
 
+tareas_ejecutadas = set()
+
 
 class MiBot(commands.Bot):
     def __init__(self):
@@ -35,7 +37,8 @@ client = MiBot()
 @client.event
 async def on_ready():
     print(f"✅ Bot conectado como {client.user}")
-    tarea_diaria.start()
+    if not tarea_diaria.is_running():
+        tarea_diaria.start()
 
 @client.tree.command(name="ping", description="Verifica que el bot esté activo")
 async def ping(interaction: discord.Interaction):
@@ -56,16 +59,16 @@ async def ping(interaction: discord.Interaction):
 async def tarea_diaria():
     zona = pytz.timezone(ZONA_HORARIA)
     ahora = datetime.datetime.now(zona)
-    es_laboral = ahora.weekday() <= 4  # 0=lunes, 4=viernes
+    es_laboral = ahora.weekday() <= 4
     es_viernes = ahora.weekday() == 4
 
     hora = ahora.hour
     minuto = ahora.minute
+    hoy = ahora.strftime('%Y-%m-%d')
 
-    # ─────────────────────────────────────────
-    # LUNES A VIERNES 8:00 AM — Asistencia con reacción
-    # ─────────────────────────────────────────
-    if es_laboral and hora == 8 and minuto == 0:
+    clave_asistencia = f"asistencia_{hoy}"
+    if es_laboral and hora == 8 and minuto <= 10 and clave_asistencia not in tareas_ejecutadas:
+        tareas_ejecutadas.add(clave_asistencia)
         canal = client.get_channel(CANAL_ASISTENCIA_ID)
         if canal:
             mensaje = await canal.send(
@@ -74,10 +77,9 @@ async def tarea_diaria():
             )
             await mensaje.add_reaction("✅")
 
-    # ─────────────────────────────────────────
-    # LUNES A VIERNES 8:00 PM — Recordatorio racha LionBot
-    # ─────────────────────────────────────────
-    if es_laboral and hora == 20 and minuto == 0:
+    clave_racha = f"racha_{hoy}"
+    if es_laboral and hora == 20 and minuto <= 10 and clave_racha not in tareas_ejecutadas:
+        tareas_ejecutadas.add(clave_racha)
         canal = client.get_channel(CANAL_RACHAS_ID)
         if canal:
             mensaje = await canal.send(
@@ -90,10 +92,9 @@ async def tarea_diaria():
                 auto_archive_duration=1440
             )
 
-    # ─────────────────────────────────────────
-    # VIERNES 8:00 PM — Resumen semanal en #progreso
-    # ─────────────────────────────────────────
-    if es_viernes and hora == 20 and minuto == 0:
+    clave_progreso = f"progreso_{hoy}"
+    if es_viernes and hora == 20 and minuto <= 10 and clave_progreso not in tareas_ejecutadas:
+        tareas_ejecutadas.add(clave_progreso)
         canal = client.get_channel(CANAL_PROGRESO_ID)
         if canal:
             mensaje = await canal.send(
@@ -110,6 +111,11 @@ async def tarea_diaria():
             await hilo.send(
                 f"<@{JOAQUIN_ID}> Respondé acá tu resumen de la semana 👆"
             )
+
+    ayer = (ahora - datetime.timedelta(days=2)).strftime('%Y-%m-%d')
+    claves_a_borrar = {c for c in tareas_ejecutadas if ayer in c}
+    tareas_ejecutadas -= claves_a_borrar
+
 
 webserver.keep_alive()
 client.run(TOKEN)
