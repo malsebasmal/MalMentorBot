@@ -84,7 +84,7 @@ async def tarea_diaria():
 
     # --- Asistencia ---
     clave_asistencia = f"asistencia_{hoy}"
-    if es_laboral and hora == 8 and minuto <= 10 and clave_asistencia not in tareas_ejecutadas:
+    if es_laboral and hora == 14 and minuto <= 10 and clave_asistencia not in tareas_ejecutadas:
         try:
             tareas_ejecutadas.add(clave_asistencia)
             canal = client.get_channel(CANAL_ASISTENCIA_ID)
