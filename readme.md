@@ -7,3 +7,10 @@ It is a Discord bot that displays three different messages:
 -----
 
 It was a lot of fun to build :)
+
+-----
+
+Is hosted in 2 services:
+
+- https://render.com (Host for the bot)
+- https://uptimerobot.com (Restart automatically the bot)
