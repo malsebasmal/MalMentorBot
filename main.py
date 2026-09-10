@@ -23,7 +23,7 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 CANAL_ASISTENCIA_ID = int(os.getenv("CANAL_ASISTENCIA_ID"))
 CANAL_RACHAS_ID = int(os.getenv("CANAL_RACHAS_ID"))
 CANAL_PROGRESO_ID = int(os.getenv("CANAL_PROGRESO_ID"))
-JOAQUIN_ID = int(os.getenv("JOAQUIN_ID"))
+USER_ID = int(os.getenv("USER_ID"))
 ADMIN_ID = int(os.getenv("ADMIN_ID"))
 ZONA_HORARIA = "America/Lima"
 
@@ -90,7 +90,7 @@ async def tarea_diaria():
             canal = client.get_channel(CANAL_ASISTENCIA_ID)
             if canal:
                 mensaje = await canal.send(
-                    f"📋 ¡Buenos días <@{JOAQUIN_ID}>!\n"
+                    f"📋 ¡Buenos días <@{USER_ID}>!\n"
                     "Reaccioná con ✅ para confirmar tu asistencia de hoy."
                 )
                 await mensaje.add_reaction("✅")
@@ -108,7 +108,7 @@ async def tarea_diaria():
             canal = client.get_channel(CANAL_RACHAS_ID)
             if canal:
                 mensaje = await canal.send(
-                    f"🔥 <@{JOAQUIN_ID}> ¡Terminó la jornada de hoy!\n\n"
+                    f"🔥 <@{USER_ID}> ¡Terminó la jornada de hoy!\n\n"
                     "Usá el comando `/profile` de LionBot acá abajo para mostrar "
                     "tus estadísticas del día y mantener la racha activa. 👇"
                 )
@@ -130,7 +130,7 @@ async def tarea_diaria():
             canal = client.get_channel(CANAL_PROGRESO_ID)
             if canal:
                 mensaje = await canal.send(
-                    f"📈 <@{JOAQUIN_ID}> ¡Terminó otra semana!\n\n"
+                    f"📈 <@{USER_ID}> ¡Terminó otra semana!\n\n"
                     "Es momento de reflexionar. Respondé en el hilo 👇\n\n"
                     "**1.** ¿Qué fue lo que más te costó esta semana?\n"
                     "**2.** ¿Cómo te autoevaluás del 1 al 10?\n"
@@ -141,7 +141,7 @@ async def tarea_diaria():
                     auto_archive_duration=4320
                 )
                 await hilo.send(
-                    f"<@{JOAQUIN_ID}> Respondé acá tu resumen de la semana 👆"
+                    f"<@{USER_ID}> Respondé acá tu resumen de la semana 👆"
                 )
                 log.info(f"Mensaje de progreso semanal enviado ({hoy})")
             else:
